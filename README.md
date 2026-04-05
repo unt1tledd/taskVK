@@ -2,7 +2,7 @@
 
 Высокопроизводительный микросервис на **Java 20**, реализующий хранилище "ключ-значение". Система оптимизирована для работы с большими объемами данных и поддерживает интеграцию с **Tarantool**.
 
-[![CI check](https://github.com/unt1tledd/tackVK/actions/workflows/main.yml/badge.svg)](https://github.com/unt1tledd/tackVK/actions/workflows/main.yml)
+[![CI check](https://github.com/unt1tledd/taskVK/actions/workflows/main.yml/badge.svg)](https://github.com/unt1tledd/taskVK/actions/workflows/main.yml)
 
 ---
 
