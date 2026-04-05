@@ -9,8 +9,10 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up JDK 20
         uses: actions/setup-java@v4
@@ -19,25 +21,48 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn clean install -DskipTests
+      - name: Build without tests
+        run: mvn -B clean install -DskipTests
 
-      - name: Run Logic Tests
-        run: mvn test -Dtest=KVServerTest
+      - name: Run logic tests
+        run: mvn -B test -Dtest=KVServerTest
 
-      - name: Start Infrastructure (Tarantool + App)
+      - name: Prepare Tarantool data dir
+        run: |
+          mkdir -p ./tarantool/data
+          chmod -R 777 ./tarantool/data
+
+      - name: Start infrastructure
         run: docker compose up -d --build
 
-      - name: Wait for services
-        run: sleep 30
+      - name: Show containers
+        run: docker compose ps
 
-      - name: Run Stress Tests
-        run: mvn test -Dtest=StressTest
+      - name: Wait for Tarantool and gRPC
+        run: |
+          for i in {1..60}; do
+            if nc -z 127.0.0.1 3301 && nc -z 127.0.0.1 9090; then
+              echo "Tarantool and gRPC are ready"
+              exit 0
+            fi
+            echo "Waiting for services..."
+            docker compose ps
+            sleep 2
+          done
 
-      - name: Show Logs on Failure
+          echo "Services did not start in time"
+          docker compose logs --tail=300
+          exit 1
+
+      - name: Run stress tests
+        run: mvn -B test -Dtest=StressTest
+
+      - name: Show logs on failure
         if: failure()
-        run: docker compose logs
+        run: |
+          docker compose ps
+          docker compose logs --tail=300
 
-      - name: Stop Infrastructure
+      - name: Stop infrastructure
         if: always()
-        run: docker compose down
+        run: docker compose down -v
