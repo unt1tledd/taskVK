@@ -6,7 +6,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int64Value;
 import com.unt1tledd.entity.KVEntry;
-import com.unt1tledd.exceptions.ServiceException;
 import com.unt1tledd.service.KVService;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -38,11 +37,6 @@ public class KVController extends KVServiceGrpc.KVServiceImplBase {
             response.onError(Status.INVALID_ARGUMENT
                     .withDescription(e.getMessage())
                     .asRuntimeException());
-        } catch (ServiceException e) {
-            log.error("Service error in put: key='{}'", request.getKey(), e);
-            response.onError(Status.INTERNAL
-                    .withDescription(e.getMessage())
-                    .asRuntimeException());
         } catch (Exception e) {
             log.error("Unexpected error in put: key='{}'", request.getKey(), e);
             response.onError(Status.INTERNAL
@@ -72,11 +66,6 @@ public class KVController extends KVServiceGrpc.KVServiceImplBase {
             response.onError(Status.INVALID_ARGUMENT
                     .withDescription(e.getMessage())
                     .asRuntimeException());
-        } catch (ServiceException e) {
-            log.error("Service error in get: key='{}'", request.getKey(), e);
-            response.onError(Status.INTERNAL
-                    .withDescription(e.getMessage())
-                    .asRuntimeException());
         } catch (Exception e) {
             log.error("Unexpected error in get: key='{}'", request.getKey(), e);
             response.onError(Status.INTERNAL
@@ -96,11 +85,6 @@ public class KVController extends KVServiceGrpc.KVServiceImplBase {
         } catch (IllegalArgumentException e) {
             log.warn("Validation error in delete: key='{}'", request.getKey(), e);
             response.onError(Status.INVALID_ARGUMENT
-                    .withDescription(e.getMessage())
-                    .asRuntimeException());
-        } catch (ServiceException e) {
-            log.error("Service error in delete: key='{}'", request.getKey(), e);
-            response.onError(Status.INTERNAL
                     .withDescription(e.getMessage())
                     .asRuntimeException());
         } catch (Exception e) {
@@ -133,12 +117,6 @@ public class KVController extends KVServiceGrpc.KVServiceImplBase {
             response.onError(Status.INVALID_ARGUMENT
                     .withDescription(e.getMessage())
                     .asRuntimeException());
-        } catch (ServiceException e) {
-            log.error("Service error in range: keySince='{}', keyTo='{}'",
-                    request.getKeySince(), request.getKeyTo(), e);
-            response.onError(Status.INTERNAL
-                    .withDescription(e.getMessage())
-                    .asRuntimeException());
         } catch (Exception e) {
             log.error("Unexpected error in range: keySince='{}', keyTo='{}'",
                     request.getKeySince(), request.getKeyTo(), e);
@@ -160,11 +138,6 @@ public class KVController extends KVServiceGrpc.KVServiceImplBase {
             response.onNext(resp);
             response.onCompleted();
             log.info("Completed 'count'");
-        } catch (ServiceException e) {
-            log.error("Service error in count", e);
-            response.onError(Status.INTERNAL
-                    .withDescription(e.getMessage())
-                    .asRuntimeException());
         } catch (Exception e) {
             log.error("Unexpected error in count", e);
             response.onError(Status.INTERNAL
