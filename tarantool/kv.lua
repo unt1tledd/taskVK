@@ -1,5 +1,5 @@
 box.cfg {
-    listen = 3301
+    listen = 3301,
     memtx_memory = 3 * 1024 * 1024 * 1024,
 }
 
