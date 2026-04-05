@@ -67,11 +67,11 @@ public class KVServiceImpl implements KVService {
         }
 
         if (kvrepo.get(keySince).isEmpty()) {
-            throw new ServiceException("Start key '" + keySince + "' not found", null);
+            throw new ServiceException("Start key '" + keySince + "' not found");
         }
 
         if (kvrepo.get(keyTo).isEmpty()) {
-            throw new ServiceException("End key '" + keyTo + "' not found", null);
+            throw new ServiceException("End key '" + keyTo + "' not found");
         }
 
         try {
