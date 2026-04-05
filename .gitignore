@@ -1,0 +1,5 @@
+target/*
+.idea/*
+.DS_Store
+dependency-reduced-pom.xml
+tarantool/data/*

@@ -1,0 +1,25 @@
+services:
+  tarantool:
+    image: tarantool/tarantool:3.2
+    container_name: tarantool_db
+    ports:
+      - "3301:3301"
+    volumes:
+      - ./tarantool/kv.lua:/opt/kv.lua
+      - ./tarantool/data:/var/lib/tarantool
+    command: tarantool /opt/kv.lua
+    user: "0:0"
+
+  grpc-server:
+    build: .
+    container_name: java_grpc_server
+    ports:
+      - "9090:9090"
+    depends_on:
+      - tarantool
+    environment:
+      - TARANTOOL_HOST=tarantool
+      - TARANTOOL_PORT=3301
+      - GRPC_PORT=9090
+      - TARANTOOL_USER=kvadmin
+      - TARANTOOL_PASS=kvpassword
