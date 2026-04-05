@@ -29,10 +29,16 @@ jobs:
         run: docker compose up -d
 
       - name: Wait for services
-        run: sleep 15
+        run: sleep 30
 
       - name: Run Stress Tests
         run: mvn test -Dtest=StressTest
+
+      - name: Show Logs on Failure
+        if: failure()
+        run: |
+          docker compose logs java_grpc_server
+          docker compose logs tarantool_db
 
       - name: Stop Infrastructure
         if: always()
